@@ -1,50 +1,28 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
-	"github.com/earthboundkid/stdin"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
-/*
-   groups = search("^(M*)(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$", input.upper()).groups()
-   total = 0
-   for group in groups:
-       if len(group)==2 and conversions[group[1]]>conversions[group[0]]:
-           total += (conversions[group[1]]-conversions[group[0]])
-       elif group:
-           for digit in group:
-               total += conversions[digit]
-   return total
-*/
 var NotRomanNumeral = errors.New("Input was not a valid roman numeral.")
 
-var re = regexp.MustCompile("^(M*)(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$")
-
-func convert(digit byte) int {
-	switch digit {
-	case 'I':
-		return 1
-	case 'V':
-		return 5
-	case 'X':
-		return 10
-	case 'L':
-		return 50
-	case 'C':
-		return 100
-	case 'D':
-		return 500
-	case 'M':
-		return 1000
-	}
-	panic("Only use func convert with valid roman numeral digits.")
-}
+var (
+	re          = regexp.MustCompile("^(M*)(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$")
+	conversions = map[byte]int{'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
+)
 
 func roman_to_arabic(input string) (int, error) {
+	//The regexp matches by default
+	if len(input) == 0 {
+		return 0, NotRomanNumeral
+	}
+
 	//Normalize input
 	input = strings.ToUpper(input)
 
@@ -62,11 +40,16 @@ func roman_to_arabic(input string) (int, error) {
 		if i == 0 {
 			continue
 		}
-		if len(match) == 2 && (convert(match[1]) > convert(match[0])) {
-			total += convert(match[1]) - convert(match[0])
-		} else if len(match) > 0 {
+		if len(match) == 2 {
+			first, second := conversions[match[0]], conversions[match[1]]
+			if second > first {
+				total += second - first
+			} else {
+				total += second + first
+			}
+		} else {
 			for j := range match {
-				total += convert(match[j])
+				total += conversions[match[j]]
 			}
 		}
 	}
@@ -78,7 +61,9 @@ func arabic_to_roman(n int) string {
 }
 
 func main() {
-	for line := range stdin.Chan() {
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		line := scanner.Text()
 		if n, err := strconv.Atoi(line); err == nil && n > 0 && n < 4000 {
 			fmt.Println(arabic_to_roman(n))
 		} else if roman, err := roman_to_arabic(line); err == nil {
