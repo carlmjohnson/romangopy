@@ -17,7 +17,7 @@ def roman_to_arabic(input):
     return total
     
 def arabic_to_roman(input):
-    expanded = [int(tuple[1])*(10**(len(input)-tuple[0])) for tuple in enumerate(input, 1)]
+    expanded = [int(s)*(10**(len(input)-n)) for s, n in enumerate(input, 1)]
     roman = []
     for count, number in enumerate(expanded):
         if number not in conversions.values():
