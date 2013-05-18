@@ -44,11 +44,15 @@ def arabic_to_roman(input):
             if conversions[entry]==number:
                 roman.append(entry)
     return "".join(roman)
-    
-while True:
-    input = raw_input("Please enter an integer or roman numeral which you would like to be converted: ")
-    if input.isdigit() and int(input)>=1: print "The roman numeral conversion of %s is: %s" %(input, arabic_to_roman(input))
-    elif input.isalpha(): 
-        try: print "The arabic integer conversion of %s is: %d" %(input, roman_to_arabic(input))
-        except AttributeError: print "Sorry, your input was invalid."
-    else: print "Sorry, your input was invalid."
+
+def interactive_main():
+    while True:
+        input = raw_input("Please enter an integer or roman numeral which you would like to be converted: ")
+        if input.isdigit() and int(input)>=1: print "The roman numeral conversion of %s is: %s" %(input, arabic_to_roman(input))
+        elif input.isalpha(): 
+            try: print "The arabic integer conversion of %s is: %d" %(input, roman_to_arabic(input))
+            except AttributeError: print "Sorry, your input was invalid."
+        else: print "Sorry, your input was invalid."
+
+if __name__ == "__main__":
+    interactive_main()
