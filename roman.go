@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/moovweb/rubex"
 	"os"
-	"regexp"
 	"strconv"
 	"strings"
 )
@@ -13,7 +13,7 @@ import (
 var NotRomanNumeral = errors.New("Input was not a valid roman numeral.")
 
 var (
-	re          = regexp.MustCompile("^(M*)(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$")
+	re          = rubex.MustCompile("^(M*)(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$")
 	conversions = map[byte]int{'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
 )
 
