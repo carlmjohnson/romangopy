@@ -54,5 +54,13 @@ def interactive_main():
             except AttributeError: print "Sorry, your input was invalid."
         else: print "Sorry, your input was invalid."
 
+def generate_tests():
+    import random
+    
+    funcs = [arabic_to_roman, lambda s: s]
+    
+    while True:
+        print random.choice(funcs)(str(random.randint(1,3999)))
+
 if __name__ == "__main__":
-    interactive_main()
+    generate_tests()
