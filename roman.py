@@ -1,3 +1,6 @@
+"""A simple module to convert arabic numerals to roman numerals and vice
+versa. Taken from http://pastebin.com/V6jHJZX3."""
+
 from re import search
 
 conversions = {'I':1, 'V':5, 'X':10, 'L':50, 'C':100, 'D':500, 'M':1000}
