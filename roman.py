@@ -17,7 +17,7 @@ def roman_to_arabic(input):
     return total
     
 def arabic_to_roman(input):
-    expanded = [int(s)*(10**(len(input)-n)) for s, n in enumerate(input, 1)]
+    expanded = [int(s)*(10**(len(input)-n)) for n, s in enumerate(input, 1)]
     roman = []
     for count, number in enumerate(expanded):
         if number not in conversions.values():
@@ -66,15 +66,16 @@ def std_main():
     import fileinput
     
     for input in fileinput.input():
+        input = input.strip()
         if input.isdigit() and int(input)>=1: 
-            print arabic_to_roman(input),
+            print arabic_to_roman(input)
         elif input.isalpha(): 
             try: 
-                print input, roman_to_arabic(input)
+                print roman_to_arabic(input)
             except AttributeError: 
-                print input,
+                print input
         else:
-            print input,
+            print input
 
 if __name__ == "__main__":
     std_main()
