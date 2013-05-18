@@ -62,5 +62,19 @@ def generate_tests():
     while True:
         print random.choice(funcs)(str(random.randint(1,3999)))
 
+def std_main():
+    import fileinput
+    
+    for input in fileinput.input():
+        if input.isdigit() and int(input)>=1: 
+            print arabic_to_roman(input),
+        elif input.isalpha(): 
+            try: 
+                print input, roman_to_arabic(input)
+            except AttributeError: 
+                print input,
+        else:
+            print input,
+
 if __name__ == "__main__":
-    generate_tests()
+    std_main()
