@@ -37,6 +37,7 @@ func roman_to_arabic(input string) (int, error) {
 	total := 0
 
 	for i, match := range matchlist[0] {
+		//The first match is the whole thing. Ignore it.
 		if i == 0 {
 			continue
 		}
