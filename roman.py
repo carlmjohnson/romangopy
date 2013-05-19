@@ -4,6 +4,14 @@ versa. Taken from http://pastebin.com/V6jHJZX3."""
 from re import search
 
 conversions = {'I':1, 'V':5, 'X':10, 'L':50, 'C':100, 'D':500, 'M':1000}
+reverse_conversions = {
+        0: "", 1: "I", 2: "II", 3: "III", 4: "IV",
+        5: "V", 6: "VI", 7: "VII", 8: "VIII", 9: "IX",
+        10: "X", 20: "XX", 30: "XXX", 40: "XL",
+        50: "L", 60: "LX", 70: "LXX", 80: "LXXX", 90: "XC",
+        100: "C", 200: "CC", 300: "CCC", 400: "CD",
+        500: "D", 600: "DC", 700: "DCC", 800: "DCCC", 900: "CM",
+}
 
 def roman_to_arabic(input):
     groups = search("^(M*)(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$", input.upper()).groups()
@@ -15,8 +23,41 @@ def roman_to_arabic(input):
             for digit in group:
                 total += conversions[digit]
     return total
-    
+
 def arabic_to_roman(input):
+    roman = []
+    
+    n = int(input)
+    if n < 1:
+        raise ValueError("Only integers > 1 can be put in roman numerals")
+    #Get thousands digit
+    #Put that many Ms upfront.
+    thousands = n // 1000
+    roman.append("M" * thousands)
+
+    #Chop off remaining thousands.
+    n %= 1000
+
+    #Get hundreds digit, use dict to look that up.
+    
+    hundreds = (n // 100) * 100
+    roman.append(reverse_conversions[hundreds])
+
+    #Chop off remaining hundreds.
+    n %= 100
+
+    #Get tens digit
+    tens = (n // 10) * 10
+    roman.append(reverse_conversions[tens])
+
+    #Get ones digit
+    ones = n % 10
+    roman.append(reverse_conversions[ones])
+
+    return "".join(roman)
+
+
+def original_arabic_to_roman(input):
     expanded = [int(s)*(10**(len(input)-n)) for n, s in enumerate(input, 1)]
     roman = []
     for count, number in enumerate(expanded):
