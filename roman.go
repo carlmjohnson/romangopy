@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+//This is the error returned when func RomanToArabic fails.
 var NotRomanNumeral = errors.New("Input was not a valid roman numeral.")
 
 var (
@@ -20,7 +21,7 @@ var (
 		'L': 50, 'C': 100, 'D': 500,
 		'M': 1000,
 	}
-	rConversions = map[int]string{
+	rConversions = map[uint]string{
 		1: "I", 2: "II", 3: "III", 4: "IV",
 		5: "V", 6: "VI", 7: "VII", 8: "VIII", 9: "IX",
 		10: "X", 20: "XX", 30: "XXX", 40: "XL",
@@ -28,12 +29,30 @@ var (
 		100: "C", 200: "CC", 300: "CCC", 400: "CD",
 		500: "D", 600: "DC", 700: "DCC", 800: "DCCC", 900: "CM",
 	}
-
-	romanBacking = [4]string{}
 )
 
-func roman_to_arabic(input string) (int, error) {
-	//The regexp matches by default
+func main() {
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if n, err := strconv.Atoi(line); err == nil && n > 0 {
+			fmt.Println(ArabicToRoman(uint(n)))
+		} else if roman, err := RomanToArabic(line); err == nil {
+			fmt.Println(roman)
+		} else {
+			fmt.Println(line)
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		fmt.Fprintln(os.Stderr, "reading standard input:", err)
+	}
+}
+
+//RomanToArabic takes an input string and returns an int of that string
+//as a roman numeral if possible. If input is not a valid roman numeral,
+//it returns the error NotRomanNumeral.
+func RomanToArabic(input string) (int, error) {
+	//The regexp matches by default, so cut it off here.
 	if len(input) == 0 {
 		return 0, NotRomanNumeral
 	}
@@ -72,41 +91,16 @@ func roman_to_arabic(input string) (int, error) {
 	return total, nil
 }
 
-/*
-   expanded = [int(s)*(10**(len(input)-n)) for n, s in enumerate(input, 1)]
-   roman = []
-   for count, number in enumerate(expanded):
-       if number not in conversions.values():
-           if number>1000:
-               expanded[count] = 1000
-               for time in range((number/1000)-1):
-                   expanded.insert(1, 1000)
-           elif 1<int(str(number)[0])<4:
-               expanded[count] = 10**(len(str(number))-1)
-               for time in range(int(str(number)[0])-1):
-                   expanded.insert(count+1, expanded[count])
-           elif int(str(number)[0])==4:
-               expanded[count] = 10**(len(str(number))-1)
-               expanded.insert(count+1, 5*(expanded[count]))
-           elif 5<int(str(number)[0])<9:
-               expanded[count] = 5*(10**(len(str(number))-1))
-               for time in range(int(str(number)[0])-5):
-                   expanded.insert(count+1, 10**(len(str(number))-1))
-           elif int(str(number)[0])==9:
-               expanded[count] = 10**(len(str(number))-1)
-               expanded.insert(count+1, 10*(expanded[count]))
-   for number in expanded:
-       for entry in conversions:
-           if conversions[entry]==number:
-               roman.append(entry)
-   return "".join(roman)
-*/
-func arabic_to_roman(n int) string {
-	roman := romanBacking[:0]
+//AbrabicToRoman takes an unsigned int (no negative numbers!) and 
+//returns a string with that int as a roman numeral. If the number is
+//more than three thousand, it just jams a lot of Ms on the front. Given
+//zero it returns the empty string.
+func ArabicToRoman(n uint) string {
+	roman := make([]string, 0, 4)
 
 	//Get thousands digit
 	//Put that many Ms upfront.
-	if thousands := n / 1000; thousands != 0 {
+	if thousands := int(n) / 1000; thousands != 0 {
 		roman = append(roman, strings.Repeat("M", thousands))
 	}
 
@@ -132,18 +126,4 @@ func arabic_to_roman(n int) string {
 	}
 
 	return strings.Join(roman, "")
-}
-
-func main() {
-	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		line := scanner.Text()
-		if n, err := strconv.Atoi(line); err == nil && n > 0 {
-			fmt.Println(arabic_to_roman(n))
-		} else if roman, err := roman_to_arabic(line); err == nil {
-			fmt.Println(roman)
-		} else {
-			fmt.Println(line)
-		}
-	}
 }
